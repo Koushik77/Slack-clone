@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -8,6 +8,7 @@ import ChatInput from "./ChatInput";
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 import { collection, doc, getFirestore, orderBy } from "firebase/firestore";
 import { app } from "../firebase";
+import Message from "./Message";
 
 const Container = styled.div`
   display: flex;
@@ -57,10 +58,14 @@ const HeaderRight = styled.div`
 
 const ChatMessages = styled.div``;
 
+const ChatBottom = styled.div`
+  padding: 100px;
+`;
+
 function ChatBody() {
+  const bottomRef = useRef(null);
   const roomId = useSelector(selectRoomId);
-  console.log({ roomId });
-  const [roomDetails] = useDocument(
+  const [roomDetails, loading] = useDocument(
     roomId && doc(getFirestore(app), "rooms", roomId),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
@@ -73,12 +78,12 @@ function ChatBody() {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
   );
-  if (roomDetails) {
-    console.log(roomDetails.data());
-  }
-  if (messageDetails) {
-    messageDetails.docs.map((doc) => console.log(doc.data()));
-  }
+
+  useEffect(() => {
+    bottomRef?.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [roomId, loading]);
 
   return (
     <Container>
@@ -96,14 +101,31 @@ function ChatBody() {
         </HeaderRight>
       </Header>
       <ChatMessages>
-        {messageDetails && messageDetails.docs.map((doc) => (
-          <p key={doc.id}>{doc.data().content}</p>
-        ))}
+        {messageDetails?.docs
+          .sort(
+            (doc1, doc2) =>
+              new Date(doc1.data()?.timestamp?.toDate()) -
+              new Date(doc2.data()?.timestamp?.toDate())
+          )
+          .map((doc) => {
+            const { content, timestamp, user, userImage } = doc.data();
+            return (
+              <Message
+                key={doc.id}
+                message={content}
+                timestamp={timestamp}
+                user={user}
+                userImage={userImage}
+              />
+            );
+          })}
+        <ChatBottom ref={bottomRef} />
       </ChatMessages>
       <ChatInput
-        //channelName
+        chatRef={bottomRef}
+        channelName={roomDetails?.data().name}
         channelId={roomId}
-      ></ChatInput>
+      />
     </Container>
   );
 }

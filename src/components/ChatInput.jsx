@@ -28,7 +28,7 @@ const ChatContainer = styled.div`
   }
 `;
 
-function ChatInput({ channelName, channelId }) {
+function ChatInput({ channelName, channelId, chatRef }) {
   const inputRef = useRef(null);
   const sendMessage = (e) => {
     e.preventDefault();
@@ -47,11 +47,14 @@ function ChatInput({ channelName, channelId }) {
     );
 
     inputRef.current.value = null;
+    chatRef?.current?.scrollIntoView({
+        behavior: 'smooth',
+    });
   };
   return (
     <ChatContainer>
       <form>
-        <input ref={inputRef} placeholder={`Message room`} />
+        <input ref={inputRef} placeholder={`Message #${channelName}`} />
         <Button hidden type="submit" onClick={sendMessage}>
           Send
         </Button>
