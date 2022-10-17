@@ -4,8 +4,11 @@ import "./App.css";
 import styled from "styled-components";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
+import ChatBody from "./components/ChatBody";
 
-const AppContent = styled.div``;
+const AppContent = styled.div`
+  display: flex;
+`;
 
 function App() {
   return (
@@ -13,13 +16,10 @@ function App() {
       <Header />
       <AppContent>
         <Sidebar></Sidebar>
-
         <Router>
-          <>
-            <Routes>
-              <Route path="/" exact element={<></>} />
-            </Routes>
-          </>
+          <Routes>
+            <Route path="/" exact element={<ChatBody />} />
+          </Routes>
         </Router>
       </AppContent>
     </div>
