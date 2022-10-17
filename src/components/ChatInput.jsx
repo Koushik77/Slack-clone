@@ -47,9 +47,9 @@ function ChatInput({ channelName, channelId, chatRef }) {
     );
 
     inputRef.current.value = null;
-    chatRef?.current?.scrollIntoView({
-        behavior: 'smooth',
-    });
+    // chatRef?.current?.scrollIntoView({
+    //     behavior: 'smooth',
+    // });
   };
   return (
     <ChatContainer>

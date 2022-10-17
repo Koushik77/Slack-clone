@@ -80,9 +80,9 @@ function ChatBody() {
   );
 
   useEffect(() => {
-    bottomRef?.current?.scrollIntoView({
-      behavior: "smooth",
-    });
+    // bottomRef?.current?.scrollIntoView({
+    //   behavior: "smooth",
+    // });
   }, [roomId, loading]);
 
   return (

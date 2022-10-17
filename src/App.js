@@ -8,6 +8,7 @@ import ChatBody from "./components/ChatBody";
 
 const AppContent = styled.div`
   display: flex;
+  margin-top: 60px;
 `;
 
 function App() {

@@ -65,10 +65,6 @@ const IconHolder = styled.div`
 `;
 
 function Sidebar() {
-  // const [channelList, setChannelList] = useState([]);
-  // useEffect(() => {
-  //   getRooms().then((data) => setChannelList(data));
-  // }, []);
   const [showChannels, setShowChannels] = useState(true);
   const [showTopOptions, setShowTopOptions] = useState(true);
   const [value, loading, error] = useCollection(

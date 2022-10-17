@@ -12,6 +12,9 @@ const Container = styled.div`
   padding: 10px;
   align-items: center;
   width: 100%;
+  position: fixed;
+  top: 0;
+  border-bottom: 1px solid #49274b;
 `;
 
 const HeaderLeft = styled.div`
