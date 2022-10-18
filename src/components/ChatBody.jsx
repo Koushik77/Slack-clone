@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import styled from "styled-components";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -65,7 +65,7 @@ const ChatBottom = styled.div`
 function ChatBody() {
   const bottomRef = useRef(null);
   const roomId = useSelector(selectRoomId);
-  const [roomDetails, loading] = useDocument(
+  const [roomDetails] = useDocument(
     roomId && doc(getFirestore(app), "rooms", roomId),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
@@ -79,11 +79,7 @@ function ChatBody() {
     }
   );
 
-  useEffect(() => {
-    // bottomRef?.current?.scrollIntoView({
-    //   behavior: "smooth",
-    // });
-  }, [roomId, loading]);
+  if(!roomDetails || !messageDetails) return;
 
   return (
     <Container>
@@ -122,7 +118,6 @@ function ChatBody() {
         <ChatBottom ref={bottomRef} />
       </ChatMessages>
       <ChatInput
-        chatRef={bottomRef}
         channelName={roomDetails?.data().name}
         channelId={roomId}
       />

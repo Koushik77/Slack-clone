@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Button } from "@mui/material";
 import { serverTimestamp } from "firebase/firestore";
 import { addMessageToRoom } from "../firestore-crud";
+import { auth } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const ChatContainer = styled.div`
   border-radius: 20px;
@@ -28,8 +30,10 @@ const ChatContainer = styled.div`
   }
 `;
 
-function ChatInput({ channelName, channelId, chatRef }) {
+function ChatInput({ channelName, channelId }) {
+  const [user] = useAuthState(auth);
   const inputRef = useRef(null);
+
   const sendMessage = (e) => {
     e.preventDefault();
 
@@ -39,18 +43,15 @@ function ChatInput({ channelName, channelId, chatRef }) {
       {
         content: inputRef.current.value,
         timestamp: serverTimestamp(),
-        user: "Koushik Ghosh",
-        userImage:
-          "https://images.ctfassets.net/yadj1kx9rmg0/wtrHxeu3zEoEce2MokCSi/cf6f68efdcf625fdc060607df0f3baef/quwowooybuqbl6ntboz3.jpg",
+        user: user?.displayName,
+        userImage: user?.photoURL,
       },
       channelId
     );
 
     inputRef.current.value = null;
-    // chatRef?.current?.scrollIntoView({
-    //     behavior: 'smooth',
-    // });
   };
+
   return (
     <ChatContainer>
       <form>

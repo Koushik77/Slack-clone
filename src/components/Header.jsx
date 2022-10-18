@@ -4,6 +4,8 @@ import Avatar from "@mui/material/Avatar";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import SearchIcon from "@mui/icons-material/Search";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import { auth } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const Container = styled.div`
   display: flex;
@@ -60,15 +62,21 @@ const HeaderIcon = styled(Avatar)`
 `;
 
 function Header() {
+  const [user] = useAuthState(auth);
+
   return (
     <Container>
       <HeaderLeft>
-        <HeaderIcon />
+        <HeaderIcon
+          onClick={() => auth.signOut()}
+          alt={user?.displayName}
+          src={user?.photoURL}
+        />
         <AccessTimeIcon />
       </HeaderLeft>
       <HeaderSearch>
         <SearchIcon />
-        <input placeholder="Search people,channels,teams..."/>
+        <input placeholder="Search people,channels,teams..." />
       </HeaderSearch>
       <HeaderRight>
         <HelpOutlineIcon />

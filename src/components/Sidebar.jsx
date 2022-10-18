@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+
 import CreateOutlinedIcon from "@mui/icons-material/CreateOutlined";
 import SidebarOpts from "./SidebarOpts";
 import InsertCommentIcon from "@mui/icons-material/InsertComment";
@@ -12,10 +13,12 @@ import AppsIcon from "@mui/icons-material/Apps";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
-import { getRooms } from "../firestore-crud";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+
 import { getFirestore, collection } from "firebase/firestore";
 import { useCollection } from "react-firebase-hooks/firestore";
-import { app } from "../firebase";
+import { app, auth } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const Container = styled.div`
   display: flex;
@@ -46,12 +49,6 @@ const SidebarHeader = styled.div`
   }
 `;
 
-const SidebarSubHeader = styled.div``;
-
-const SidebarChannels = styled.div``;
-
-const SidebarDirectMessages = styled.div``;
-
 const IconHolder = styled.div`
   display: flex;
   justify-content: center;
@@ -64,15 +61,34 @@ const IconHolder = styled.div`
   cursor: pointer;
 `;
 
+const NameDiv = styled.div`
+  display: flex;
+  border-bottom: 1px solid #49274b;
+  align-items: center;
+  padding: 10px;
+
+  > h3 {
+    font-weight: 300;
+    font-size: 13px;
+    text-transform: capitalize;
+  }
+
+  > .MuiSvgIcon-root {
+    color: #21c921;
+    font-size: 1rem;
+    padding-top: 2px;
+    margin-right: 5px;
+  }
+`;
+
 function Sidebar() {
   const [showChannels, setShowChannels] = useState(true);
   const [showTopOptions, setShowTopOptions] = useState(true);
-  const [value, loading, error] = useCollection(
-    collection(getFirestore(app), "rooms"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  );
+  const [value] = useCollection(collection(getFirestore(app), "rooms"), {
+    snapshotListenOptions: { includeMetadataChanges: true },
+  });
+  const [user] = useAuthState(auth);
+
   return (
     <Container>
       <SidebarHeader>
@@ -83,6 +99,10 @@ function Sidebar() {
           />
         </IconHolder>
       </SidebarHeader>
+      <NameDiv>
+        <FiberManualRecordIcon />
+        <h3>{user?.displayName}</h3>
+      </NameDiv>
       <SidebarOpts Icon={InsertCommentIcon} title="Threads" />
       <SidebarOpts Icon={InboxIcon} title="Messages and mentions" />
       {showTopOptions ? (
@@ -114,13 +134,10 @@ function Sidebar() {
       {showChannels &&
         value &&
         value.docs.map((doc) => (
-          <SidebarOpts key={doc.id} title={doc.data().name} id={doc.id}/>
+          <SidebarOpts key={doc.id} title={doc.data().name} id={doc.id} />
         ))}
       <hr />
       <SidebarOpts Icon={AddIcon} title="Add channel" />
-      <SidebarSubHeader></SidebarSubHeader>
-      <SidebarChannels></SidebarChannels>
-      <SidebarDirectMessages></SidebarDirectMessages>
     </Container>
   );
 }
